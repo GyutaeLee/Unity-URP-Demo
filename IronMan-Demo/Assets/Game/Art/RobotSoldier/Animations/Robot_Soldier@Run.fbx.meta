@@ -401,7 +401,7 @@ ModelImporter:
     second: Spine2
   - first:
       74: 7400000
-    second: Run_Aim
+    second: Run
   - first:
       95: 9500000
     second: //RootNode
@@ -434,7 +434,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Run_Aim
+      name: Run
       takeName: Run_Aim
       internalID: 0
       firstFrame: 0
@@ -448,7 +448,7 @@ ModelImporter:
       loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
-      loopBlendPositionY: 0
+      loopBlendPositionY: 1
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
       keepOriginalPositionY: 1
