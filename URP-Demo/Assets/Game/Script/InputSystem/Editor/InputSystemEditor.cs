@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 
-namespace InputSystem
+namespace Demo.InputSystem
 {
     public class InputSystemEditor : EditorWindow
     {
@@ -140,7 +140,7 @@ namespace InputSystem
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("// auto generated Enum By InputSystem");
-            stringBuilder.AppendLine("namespace InputSystem");
+            stringBuilder.AppendLine("namespace Demo.InputSystem");
             stringBuilder.AppendLine("{");
 
             stringBuilder.AppendLine("    public static class InputSystemSetting");
@@ -160,7 +160,7 @@ namespace InputSystem
                 stringBuilder.AppendLine("    }");
             }
             stringBuilder.AppendLine("}");
-            string writePath = Application.dataPath + "/InputSystem/InputNames.cs";
+            string writePath = Application.dataPath + "/Game/Script/InputSystem/InputNames.cs";
             File.WriteAllText(writePath, stringBuilder.ToString());
             AssetDatabase.Refresh();
         }
