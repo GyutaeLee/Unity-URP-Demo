@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Demo.InputSystem
 {
-    // TODO : [Key] class naming 수정 필요 (충돌 발생)
     [Serializable]
     public class Key
     {

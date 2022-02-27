@@ -129,14 +129,12 @@ namespace Demo.InputSystem
             GUI.color = Color.cyan;
             if (GUILayout.Button("Apply Input System", GUILayout.Width(this.buttonSize)) == true)
             {
-                // TODO : 왜 여기서 저장하는지 확인 필요
-                CreateEnumClass(this.inputSetting.Keys);
+                CreateKeyNameEnumClass(this.inputSetting.Keys);
                 AssetDatabase.SaveAssets();
             }
         }
 
-        // TODO : 함수명 고민하기
-        public void CreateEnumClass(List<Key> inputButtons)
+        public void CreateKeyNameEnumClass(List<Key> inputButtons)
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("/*");
