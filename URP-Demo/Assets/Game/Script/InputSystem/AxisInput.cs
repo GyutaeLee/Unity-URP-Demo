@@ -1,4 +1,4 @@
-namespace InputSystem
+namespace Demo.InputSystem
 {
     public class AxisInput
     {
