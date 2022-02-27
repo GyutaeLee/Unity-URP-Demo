@@ -139,7 +139,9 @@ namespace Demo.InputSystem
         public void CreateEnumClass(List<Key> inputButtons)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("// auto generated Enum By InputSystem");
+            stringBuilder.AppendLine("/*");
+            stringBuilder.AppendLine(" auto generated Enum By InputSystem");
+            stringBuilder.AppendLine("*/");
             stringBuilder.AppendLine("namespace Demo.InputSystem");
             stringBuilder.AppendLine("{");
 
