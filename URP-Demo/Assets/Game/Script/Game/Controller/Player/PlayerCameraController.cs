@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Demo.Game.Controller
+namespace Demo.Game.Controller.Player
 {
-    public sealed class CameraController : MonoBehaviour
+    public sealed class PlayerCameraController : MonoBehaviour
     {
         [SerializeField]
         private Transform charcterBody;
