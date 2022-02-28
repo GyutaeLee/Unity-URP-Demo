@@ -1,18 +1,18 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Demo.Game.Controller
 {
+    [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(Rigidbody))]
     public class BaseController : MonoBehaviour
     {
         [Serializable]
-        private class Context
+        protected class Context
         {
             internal Vector3 originalScale;
 
+            internal Animator animator;
             internal Rigidbody rigidbody;
             internal Transform transform;
 
@@ -26,35 +26,36 @@ namespace Demo.Game.Controller
             internal float walkSpeed = 5.0f;
         }
 
-        private abstract class Action
+        protected abstract class Action
         {
             protected Context context;
+            protected string animationParameterName;
 
             protected Action(Context context) { this.context = context; }
 
             public abstract void Run();
         }
 
-        private abstract class AxisAction
+        protected abstract class AxisAction
         {
             protected Context context;
+            protected string animationParameterName;
 
             protected AxisAction(Context context) { this.context = context; }
 
             public abstract void Run(float x, float y);
         }
 
-        private class Crouch : Action
+        protected class Crouch : Action
         {
             [SerializeField]
             private float crouchHeight = 0.75f;
             [SerializeField]
             private float speedReduction = 0.5f;
 
-            public Crouch(Context context) : base(context)
+            public Crouch(Context context, string animationParameterName) : base(context)
             {
-                // Check : Action 생성자에서 들어가고 있는지 확인하기
-                //this.context = context;
+                this.animationParameterName = animationParameterName;
             }
 
             public override void Run()
@@ -81,34 +82,32 @@ namespace Demo.Game.Controller
             }
         }
 
-        private class Jump : Action
+        protected class Jump : Action
         {
             [SerializeField]
             private float jumpPower = 5.0f;
 
-            public Jump(Context context) : base(context)
+            public Jump(Context context, string animationParameterName) : base(context)
             {
-                // Check : Action 생성자에서 들어가고 있는지 확인하기
-                //this.context = context;
+                this.animationParameterName = animationParameterName;
             }
 
             public override void Run()
             {
                 this.context.rigidbody.AddForce(0.0f, this.jumpPower, 0.0f, ForceMode.Impulse);
                 this.context.isGrounded = false;
+                this.context.animator.SetTrigger(this.animationParameterName);
             }
         }
 
-        private class Walk : AxisAction
+        protected class Walk : AxisAction
         {
             public bool IsMovable { get; private set; }
 
-            public Walk(Context context) : base(context)
+            public Walk(Context context, string animationParameterName) : base(context)
             {
-                // Check : Action 생성자에서 들어가고 있는지 확인하기
-                //this.context = context;
-
                 this.IsMovable = true;
+                this.animationParameterName = animationParameterName;
             }
 
             public override void Run(float x, float y)
@@ -126,19 +125,26 @@ namespace Demo.Game.Controller
                 walkForce.z = Mathf.Clamp(walkForce.z, -maxVelocityLimit, maxVelocityLimit);
 
                 this.context.rigidbody.AddForce(walkForce, ForceMode.VelocityChange);
+
+                if (x != 0 || y != 0)
+                {
+                    this.context.animator.SetBool(this.animationParameterName, true);
+                }
+                else
+                {
+                    this.context.animator.SetBool(this.animationParameterName, false);
+                }
             }
         }
 
-        private class Sprint : AxisAction
+        protected class Sprint : AxisAction
         {
             public float SprintSpeed { get; private set; }
 
-            public Sprint(Context context) : base(context)
+            public Sprint(Context context, string animationParameterName) : base(context)
             {
-                // Check : Action 생성자에서 들어가고 있는지 확인하기
-                //this.context = context;
-
                 this.SprintSpeed = 7.0f;
+                this.animationParameterName = animationParameterName;
             }
 
             public override void Run(float x, float y)
@@ -153,78 +159,22 @@ namespace Demo.Game.Controller
                 sprintForce.z = Mathf.Clamp(sprintForce.z, -maxVelocityLimit, maxVelocityLimit);
 
                 this.context.rigidbody.AddForce(sprintForce, ForceMode.VelocityChange);
+
+                if (x != 0 || y != 0)
+                {
+                    this.context.animator.SetBool(this.animationParameterName, true);
+                }
+                else
+                {
+                    this.context.animator.SetBool(this.animationParameterName, false);
+                }
             }
         }
 
         [SerializeField]
-        private Rigidbody _rigidbody;
+        protected Rigidbody _rigidbody;
 
         [SerializeField]
-        private Context context;
-
-        private AxisAction walk;
-        private AxisAction sprint;
-        private Action crouch;
-        private Action jump;
-
-        private void Awake()
-        {
-            this.context = new Context
-            {
-                rigidbody = this._rigidbody,
-                transform = this.transform,
-                originalScale = this.transform.localScale
-            };
-
-            this.walk = new Walk(this.context);
-            this.sprint = new Sprint(this.context);
-            this.crouch = new Crouch(this.context);
-            this.jump = new Jump(this.context);
-        }
-
-        private void Update()
-        {
-            CheckGround();
-        }
-
-        private void CheckGround()
-        {
-            Vector3 origin = new Vector3(this.transform.position.x,
-                                         this.transform.position.y - (this.transform.localScale.y * 0.5f),
-                                         this.transform.position.z);
-            Vector3 direction = this.transform.TransformDirection(Vector3.down);
-            float raycastDistance = 0.75f;
-
-            if (Physics.Raycast(origin, direction, out RaycastHit hit, raycastDistance) == true)
-            {
-                this.context.isGrounded = true;
-            }
-            else
-            {
-                this.context.isGrounded = false;
-            }
-        }
-
-        public void DoWalk(float x, float z)
-            => this.walk.Run(x, z);
-
-        public void DoSprint(float x, float z)
-            => this.sprint.Run(x, z);
-
-        public void DoCroucch()
-            => this.crouch.Run();
-
-        public void DoJump()
-        {
-            if (this.context.isGrounded == true)
-            {
-                this.jump.Run();
-            }
-
-            if (this.context.isCrouched == true)
-            {
-                this.crouch.Run();
-            }
-        }
+        protected Context context;
     }
 }
