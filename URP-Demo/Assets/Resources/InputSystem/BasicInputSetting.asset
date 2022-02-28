@@ -13,11 +13,21 @@ MonoBehaviour:
   m_Name: BasicInputSetting
   m_EditorClassIdentifier: 
   keys:
-  - name: Up
-    code: 273
-  - name: Right
-    code: 275
-  - name: Down
-    code: 274
   - name: Left
     code: 276
+  - name: Right
+    code: 275
+  - name: Up
+    code: 273
+  - name: Down
+    code: 274
+  - name: Crouch
+    code: 122
+  - name: Walk
+    code: 120
+  - name: Sprint
+    code: 99
+  - name: Jump
+    code: 118
+  - name: Attack
+    code: 97

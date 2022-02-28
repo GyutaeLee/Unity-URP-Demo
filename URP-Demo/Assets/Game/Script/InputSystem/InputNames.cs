@@ -10,9 +10,14 @@ namespace Demo.InputSystem
 
     public enum KeyName
     {
-        Up,
-        Right,
-        Down,
         Left,
+        Right,
+        Up,
+        Down,
+        Crouch,
+        Walk,
+        Sprint,
+        Jump,
+        Attack,
     }
 }
