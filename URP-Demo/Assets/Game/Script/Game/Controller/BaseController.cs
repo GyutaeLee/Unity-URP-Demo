@@ -36,7 +36,7 @@ namespace Demo.Game.Controller
             public abstract void Run();
             public virtual void Stop() {  }
 
-            public void SetAnimationParameterBool(bool isActive)
+            protected void SetAnimationParameterBool(bool isActive)
             {
                 this.context.animator.SetBool(this.animationParameterName, isActive);
             }
