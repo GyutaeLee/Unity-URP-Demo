@@ -34,6 +34,12 @@ namespace Demo.Game.Controller
             protected Action(Context context) { this.context = context; }
 
             public abstract void Run();
+            public virtual void Stop() {  }
+
+            protected void SetAnimationParameterBool(bool isActive)
+            {
+                this.context.animator.SetBool(this.animationParameterName, isActive);
+            }
         }
 
         protected abstract class AxisAction
@@ -44,6 +50,11 @@ namespace Demo.Game.Controller
             protected AxisAction(Context context) { this.context = context; }
 
             public abstract void Run(float x, float y);
+
+            public void SetAnimationParameterBool(bool isActive)
+            {
+                this.context.animator.SetBool(this.animationParameterName, isActive);
+            }
         }
 
         protected class Crouch : Action
@@ -125,15 +136,7 @@ namespace Demo.Game.Controller
                 walkForce.z = Mathf.Clamp(walkForce.z, -maxVelocityLimit, maxVelocityLimit);
 
                 this.context.rigidbody.AddForce(walkForce, ForceMode.VelocityChange);
-
-                if (x != 0 || y != 0)
-                {
-                    this.context.animator.SetBool(this.animationParameterName, true);
-                }
-                else
-                {
-                    this.context.animator.SetBool(this.animationParameterName, false);
-                }
+                SetAnimationParameterBool((x != 0 || y != 0));
             }
         }
 
@@ -159,15 +162,57 @@ namespace Demo.Game.Controller
                 sprintForce.z = Mathf.Clamp(sprintForce.z, -maxVelocityLimit, maxVelocityLimit);
 
                 this.context.rigidbody.AddForce(sprintForce, ForceMode.VelocityChange);
+                SetAnimationParameterBool((x != 0 || y != 0));
+            }
+        }
 
-                if (x != 0 || y != 0)
+        protected class Shot : Action
+        {
+            [SerializeField]
+            private float repeatTime = 0.2f;
+            private float runTime;
+
+            private GameObject bulletPrefab;
+
+            public Shot(Context context, string animationParameterName) : base(context)
+            {
+                this.animationParameterName = animationParameterName;
+
+                this.runTime = repeatTime;
+                this.bulletPrefab = Resources.Load<GameObject>("Game/Weapon/Bullet");
+            }
+
+            public override void Run()
+            {
+                this.runTime += Time.deltaTime;
+
+                if (this.runTime >= this.repeatTime)
                 {
-                    this.context.animator.SetBool(this.animationParameterName, true);
+                    GenerateBullet();
+                    this.runTime = 0.0f;
                 }
-                else
-                {
-                    this.context.animator.SetBool(this.animationParameterName, false);
-                }
+
+                SetAnimationParameterBool(true);
+            }
+
+            private void GenerateBullet()
+            {
+                GameObject bulletObject = Instantiate(this.bulletPrefab); // TODO : 총구에서 나오도록 포지션 수정 필요
+                Weapon.Bullet bullet = bulletObject.GetComponent<Weapon.Bullet>();
+
+                bullet.moveSpeed = 10.0f;
+                bullet.direction = this.context.transform.TransformDirection(Vector3.forward);                
+            }
+
+            public override void Stop()
+            {
+                SetAnimationParameterBool(false);
+                ResetRunTime();
+            }
+
+            private void ResetRunTime()
+            {
+                this.runTime = this.repeatTime;
             }
         }
 

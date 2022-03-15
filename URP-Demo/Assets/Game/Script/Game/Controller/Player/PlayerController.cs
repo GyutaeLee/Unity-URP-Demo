@@ -6,6 +6,7 @@ namespace Demo.Game.Controller.Player
     {
         private AxisAction walk;
         private AxisAction sprint;
+        private Action shot;
         private Action crouch;
         private Action jump;
 
@@ -20,6 +21,7 @@ namespace Demo.Game.Controller.Player
             };
 
             this.walk = new Walk(this.context, "isRun");
+            this.shot = new Shot(this.context, "isStandingSingleShot");
             this.sprint = new Sprint(this.context, "isRun");
             this.crouch = new Crouch(this.context, "isCrouch");
             this.jump = new Jump(this.context, "JumpingTrigger");
@@ -54,6 +56,12 @@ namespace Demo.Game.Controller.Player
 
         public void DoSprint(float x, float z)
             => this.sprint.Run(x, z);
+
+        public void DoShot()
+            => this.shot.Run();
+
+        public void StopShot()
+            => this.shot.Stop();
 
         public void DoCrouch()
             => this.crouch.Run();

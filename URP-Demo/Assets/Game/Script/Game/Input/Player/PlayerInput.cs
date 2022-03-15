@@ -15,6 +15,7 @@ namespace Demo.Game.Input.Player
         private TwoAxisAction walk;
         private TwoAxisAction _camera;
 
+        private BasicKeyAction shot;
         private BasicKeyAction jump;
         private BasicKeyAction sprint;
         private BasicKeyAction crouch;
@@ -26,6 +27,7 @@ namespace Demo.Game.Input.Player
             this.walk = new TwoAxisAction("Horizontal", "Vertical", 0.0f);
             this._camera = new TwoAxisAction("Mouse X", "Mouse Y", 0.0f);
 
+            this.shot = new BasicKeyAction("Shot");
             this.jump = new BasicKeyAction("Jump");
             this.sprint = new BasicKeyAction("Sprint");
             this.crouch = new BasicKeyAction("Crouch");
@@ -33,6 +35,7 @@ namespace Demo.Game.Input.Player
             this.actionsProviders = new List<IActionProvider>()
             {
                 this.walk,
+                this.shot,
                 this.jump,
                 this.sprint,
                 this.crouch,
@@ -51,6 +54,15 @@ namespace Demo.Game.Input.Player
             float y = this._camera.verticalValue;
 
             this.cameraController.UpdateRotation(x, y);
+
+            if (this.shot.IsStay == true)
+            {
+                this.playerController.DoShot();
+            }
+            else if (this.shot.WasReleased == true)
+            {
+                this.playerController.StopShot();
+            }
 
             if (this.jump.IsPressed == true)
             {
