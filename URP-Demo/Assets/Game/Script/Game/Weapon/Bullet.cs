@@ -5,8 +5,8 @@ namespace Demo.Game.Weapon
     public class Bullet : MonoBehaviour
     {
         [SerializeField]
-        private float lifeTime = 5.0f;
-        private float liveTime;
+        private float timeToDisappear = 5.0f;
+        private float livingTime;
 
 
         public float moveSpeed { private get; set; }
@@ -14,8 +14,8 @@ namespace Demo.Game.Weapon
 
         public void Update()
         {
-            this.liveTime += Time.deltaTime;
-            if (this.liveTime >= this.lifeTime)
+            this.livingTime += Time.deltaTime;
+            if (this.livingTime >= this.timeToDisappear)
             {
                 this.gameObject.SetActive(false);
             }
